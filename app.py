@@ -3,6 +3,7 @@ import shutil
 import uuid
 import requests
 import asyncio
+import numpy as np
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from model import ReceiptMLModel
@@ -75,6 +76,13 @@ async def predict_receipt(request: PredictRequest):
         # 2. Procesamos la imagen limpia con el modelo de ML
         result = model.predict(clean_image_path)
         print(f"ML Prediction complete: {result}")
+        
+        # Convert numpy types to native Python types for FastAPI JSON serialization
+        if isinstance(result, dict):
+            for key, value in result.items():
+                if isinstance(value, np.generic):
+                    result[key] = value.item()
+                    
         return result
 
     except requests.exceptions.RequestException as e:
