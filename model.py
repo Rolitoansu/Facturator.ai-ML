@@ -3,6 +3,13 @@ import os
 import datetime
 import pandas as pd
 import joblib
+import ssl
+
+try:
+    ssl._create_default_https_context = ssl._create_unverified_context
+except AttributeError:
+    pass
+
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from rapidfuzz import process, fuzz
